@@ -1,15 +1,17 @@
-// swift-tools-version:5.5
+// swift-tools-version: 5.7
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
 import PackageDescription
 
 let package = Package(
-        name: "OneInchKit",
+        name: "SafeSwapKit",
         platforms: [
           .iOS(.v13),
         ],
         products: [
           .library(
-                  name: "OneInchKit",
-                  targets: ["OneInchKit"]
+                  name: "SafeSwapKit",
+                  targets: ["SafeSwapKit"]
           ),
         ],
         dependencies: [
@@ -22,9 +24,9 @@ let package = Package(
         ],
         targets: [
           .target(
-                  name: "OneInchKit",
+                  name: "SafeSwapKit",
                   dependencies: [
-                    "BigInt",
+                     "BigInt",
                     .product(name: "EvmKit", package: "EvmKit.Swift"),
                     .product(name: "Eip20Kit", package: "Eip20Kit.Swift"),
                     .product(name: "HsCryptoKit", package: "HsCryptoKit.Swift"),
