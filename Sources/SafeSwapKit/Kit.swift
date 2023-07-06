@@ -1,4 +1,5 @@
 import Foundation
+import RxSwift
 import BigInt
 import EvmKit
 import HsToolKit
@@ -19,10 +20,18 @@ public class Kit {
 
 extension Kit {
 
-    public func quote(fromToken: Address, toToken: Address, amount: BigUInt, protocols: String? = nil, gasPrice: GasPrice? = nil, complexityLevel: Int? = nil,
-                      connectorTokens: String? = nil, gasLimit: Int? = nil, mainRouteParts: Int? = nil, parts: Int? = nil
-    ) async throws -> Quote {
-        try await provider.quote(
+    public func quoteSingle(fromToken: Address,
+                            toToken: Address,
+                            amount: BigUInt,
+                            protocols: String? = nil,
+                            gasPrice: GasPrice? = nil,
+                            complexityLevel: Int? = nil,
+                            connectorTokens: String? = nil,
+                            gasLimit: Int? = nil,
+                            mainRouteParts: Int? = nil,
+                            parts: Int? = nil) -> Single<Quote> {
+
+        provider.quoteSingle(
                 fromToken: fromToken,
                 toToken: toToken,
                 amount: amount,
@@ -32,15 +41,25 @@ extension Kit {
                 connectorTokens: connectorTokens,
                 gasLimit: gasLimit,
                 mainRouteParts: mainRouteParts,
-                parts: parts
-        )
+                parts: parts)
     }
 
-    public func swap(fromToken: Address, toToken: Address, amount: BigUInt, slippage: Decimal, protocols: [String]? = nil, recipient: Address? = nil,
-                     gasPrice: GasPrice? = nil, burnChi: Bool? = nil, complexityLevel: Int? = nil, connectorTokens: [String]? = nil,
-                     allowPartialFill: Bool? = nil, gasLimit: Int? = nil, mainRouteParts: Int? = nil, parts: Int? = nil
-    ) async throws -> Swap {
-        try await provider.swap(fromToken: fromToken.hex,
+    public func swapSingle(fromToken: Address,
+                    toToken: Address,
+                    amount: BigUInt,
+                    slippage: Decimal,
+                    protocols: [String]? = nil,
+                    recipient: Address? = nil,
+                    gasPrice: GasPrice? = nil,
+                    burnChi: Bool? = nil,
+                    complexityLevel: Int? = nil,
+                    connectorTokens: [String]? = nil,
+                    allowPartialFill: Bool? = nil,
+                    gasLimit: Int? = nil,
+                    mainRouteParts: Int? = nil,
+                    parts: Int? = nil) -> Single<Swap> {
+
+        provider.swapSingle(fromToken: fromToken.hex,
                 toToken: toToken.hex,
                 amount: amount,
                 fromAddress: evmKit.receiveAddress.hex,
@@ -82,8 +101,9 @@ extension Kit {
 
     private static func routerAddress(chain: Chain) throws -> Address {
         switch chain.id {
-        case 1, 10, 56, 100, 137, 250, 42161, 43114: return try Address(hex: "0x1111111254EEB25477B68fb85Ed929f73A960582")
-        case 3, 4, 5, 42: return try Address(hex: "0x11111112542d85b3ef69ae05771c2dccff4faa26")
+            
+        case 1, 3, 4, 5, 42, 56, 137: return try  Address(hex:"0x6476008C612dF9F8Db166844fFE39D24aEa12271")
+
         default: throw UnsupportedChainError.noRouterAddress
         }
     }
