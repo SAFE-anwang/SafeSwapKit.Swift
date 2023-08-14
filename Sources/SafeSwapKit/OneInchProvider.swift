@@ -2,6 +2,7 @@ import Foundation
 import BigInt
 import EvmKit
 import HsToolKit
+import Alamofire
 
 class OneInchProvider {
     private static let notEnoughEthErrors = [
@@ -14,8 +15,11 @@ class OneInchProvider {
     private let networkManager: NetworkManager
     private let chain: Chain
 
-    private var url: String { "https://unstoppable.api.enterprise.1inch.exchange/" }
-
+    private var url: String { "https://api.1inch.dev/swap/" }
+    private let headers: HTTPHeaders = [
+        HTTPHeader(name: "Authorization", value: "Bearer eJ6FPSDW5z2vKD6oEcjQwnzFzvQ6nXgZ"),
+    ]
+    
     init(networkManager: NetworkManager, chain: Chain) {
         self.networkManager = networkManager
         self.chain = chain
@@ -71,7 +75,7 @@ extension OneInchProvider {
         }
 
         do {
-            let json = try await networkManager.fetchJson(url: url + "v5.0/\(chain.id)/quote", method: .get, parameters: parameters, responseCacherBehavior: .doNotCache)
+            let json = try await networkManager.fetchJson(url: url + "v5.0/\(chain.id)/quote", method: .get, parameters: parameters, headers: headers, responseCacherBehavior: .doNotCache)
 
             guard let map = json as? [String: Any] else {
                 throw ResponseError.invalidJson
@@ -122,7 +126,7 @@ extension OneInchProvider {
         }
 
         do {
-            let json = try await networkManager.fetchJson(url: url + "v5.0/\(chain.id)/swap", method: .get, parameters: parameters, responseCacherBehavior: .doNotCache)
+            let json = try await networkManager.fetchJson(url: url + "v5.0/\(chain.id)/swap", method: .get, parameters: parameters, headers: headers, responseCacherBehavior: .doNotCache)
 
             guard let map = json as? [String: Any] else {
                 throw ResponseError.invalidJson
